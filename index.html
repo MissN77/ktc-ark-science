@@ -95,6 +95,8 @@ main{max-width:960px;margin:0 auto;padding:1.2rem}
 .file-dl.preview:hover{background:#2a3d66}
 .file-dl.primary{background:var(--coral);padding:0.35rem 0.9rem;font-size:0.82rem}
 .file-dl.primary:hover{background:#d4603e}
+.file-tag{font-size:0.65rem;color:#999;font-weight:600;flex-shrink:0;white-space:nowrap;text-transform:uppercase;letter-spacing:0.02em}
+.file-tag.green-pen{color:var(--bio);font-weight:700}
 
 /* LESSON CARDS */
 .lesson-list{display:flex;flex-direction:column;gap:0.4rem}
@@ -277,6 +279,16 @@ footer{text-align:center;padding:1rem;font-size:0.7rem;color:var(--grey);border-
       <span style="background:var(--phase-exit);color:var(--white);padding:0.25rem 0.6rem;font-size:0.78rem;font-weight:600">Exit Ticket</span>
     </div>
     <div style="font-size:0.82rem;color:var(--grey)">Every lesson PowerPoint follows this sequence. The <strong>Do Now</strong> retrieves prior knowledge. <strong>I Do</strong> is your teacher input. <strong>We Do</strong> is guided practice together. <strong>You Do</strong> is independent work (worksheets, activities). The <strong>Exit Ticket</strong> checks if it stuck.</div>
+  </div>
+
+  <div style="background:var(--white);padding:1rem;border-left:3px solid var(--teal);margin-top:0.8rem">
+    <div style="font-weight:700;color:var(--navy);font-family:Arial,sans-serif;font-size:0.9rem;margin-bottom:0.4rem">Resource tags</div>
+    <div style="font-size:0.82rem;color:var(--grey);display:flex;flex-direction:column;gap:0.3rem">
+      <div><span style="color:#999;font-weight:600;font-size:0.75rem;text-transform:uppercase">PROJECT ON WB</span> - display on the whiteboard during the lesson.</div>
+      <div><span style="color:#999;font-weight:600;font-size:0.75rem;text-transform:uppercase">PRINT CLASS SET</span> - print one per student (or one between two).</div>
+      <div><span style="color:#999;font-weight:600;font-size:0.75rem;text-transform:uppercase">TEACHER ONLY</span> - for your planning. Do not give to students.</div>
+      <div><span style="color:var(--bio);font-weight:700;font-size:0.75rem;text-transform:uppercase">GREEN PEN</span> - good for green pen marking (2x per half term). These are worksheets and activities with mark schemes available.</div>
+    </div>
   </div>
 </div>
 
@@ -469,15 +481,48 @@ function previewUrl(file) {
   return null;
 }
 
+function fileUsageTag(file) {
+  const n = (file.name || '').toLowerCase();
+  const isMarkScheme = n.includes('mark scheme') || n.includes('markscheme') || n.includes(' ms.') || n.includes(' ms ') || n.includes('_ms.');
+  const isTeacherGuide = n.includes('teacher guidance') || n.includes('practical guide') || n.includes('demonstration guide') || n.includes('competency framework');
+  const isWorksheet = n.includes('worksheet') || n.includes('write on');
+  const isActivity = n.includes('activity') && !n.includes('mark scheme') && !n.includes('teacher');
+  const isKO = n.includes('knowledge organiser');
+  const isStudentBooklet = n.includes('student booklet') || n.includes('student glossary');
+  const isPPTX = n.endsWith('.pptx') || n.endsWith('.ppt');
+  const isUnitGuidance = n.includes('planning pro') || n.includes('preparation booklet') || n.includes('unit overview');
+
+  let tag = '';
+  let greenPen = false;
+
+  if (isMarkScheme || isTeacherGuide || isUnitGuidance) {
+    tag = 'teacher only';
+  } else if (isWorksheet || isActivity) {
+    tag = 'print class set';
+    greenPen = true;
+  } else if (isKO || isStudentBooklet) {
+    tag = 'print class set';
+  } else if (isPPTX) {
+    tag = 'project on WB';
+  }
+
+  let html = '';
+  if (tag) html += `<span class="file-tag">${tag}</span>`;
+  if (greenPen) html += `<span class="file-tag green-pen">green pen</span>`;
+  return html;
+}
+
 function renderFileRow(file) {
   const bt = fileBadgeType(file);
   const bl = fileBadgeLabel(file);
   const url = fileUrl(file);
   const pUrl = previewUrl(file);
   const previewBtn = pUrl ? `<a class="file-dl preview" href="${esc(pUrl)}" target="_blank" rel="noopener">Preview</a>` : '';
+  const tags = fileUsageTag(file);
   return `<div class="file-row">
     <span class="file-badge ${bt}">${bl}</span>
     <span class="file-name" title="${esc(file.name)}">${esc(file.name)}</span>
+    ${tags}
     ${previewBtn}
     <a class="file-dl" href="${esc(url)}" target="_blank" rel="noopener">Download</a>
   </div>`;
@@ -489,7 +534,7 @@ function renderFileList(files) {
 }
 
 /* ===================== PHASE RENDERING ===================== */
-const PHASE_ORDER = ['do_now', 'i_do', 'we_do', 'you_do', 'exit_ticket', 'meta'];
+const PHASE_ORDER = ['do_now', 'i_do', 'we_do', 'you_do', 'exit_ticket'];
 const PHASE_LABELS = {do_now:'Do Now',i_do:'I Do',we_do:'We Do',you_do:'You Do',exit_ticket:'Exit Ticket',meta:'Meta'};
 
 function renderPhasePills(phases) {
