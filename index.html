@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ark Science Mastery - Kemnal Technology College</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#1B2A4A;--teal:#2A9D8F;--coral:#E76F51;--cream:#FAF3E0;--gold:#E9C46A;
+  --bio:#4CAF50;--chem:#2196F3;--phys:#FF9800;--white:#fff;--grey:#666;--border:#e0e0e0;
+  --phase-do-now:#2A9D8F;--phase-i-do:#1B2A4A;--phase-we-do:#E76F51;
+  --phase-you-do:#E9C46A;--phase-exit:#1a6b62
+}
+body{font-family:Calibri,'Segoe UI',Arial,sans-serif;background:var(--cream);color:#333;line-height:1.5}
+
+/* PASSWORD GATE */
+#gate{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:9999}
+.gate-box{background:var(--white);padding:2.5rem;text-align:center;max-width:400px;width:90%}
+.gate-box h1{font-family:Arial,sans-serif;color:var(--navy);font-size:1.5rem;margin-bottom:0.2rem}
+.gate-box .subtitle{color:var(--teal);font-size:1rem;font-weight:600;margin-bottom:0.3rem}
+.gate-box p{color:var(--grey);font-size:0.9rem;margin-bottom:1.5rem}
+.gate-box input{width:100%;padding:0.8rem;border:2px solid var(--border);font-size:1rem;text-align:center;margin-bottom:0.8rem}
+.gate-box input:focus{border-color:var(--teal);outline:none}
+.gate-box button{width:100%;padding:0.8rem;background:var(--teal);color:var(--white);border:none;font-size:1rem;font-weight:600;cursor:pointer}
+.gate-box button:hover{background:#238b7e}
+.gate-error{color:var(--coral);font-size:0.85rem;margin-top:0.5rem;display:none}
+.gate-badge{display:inline-block;background:var(--navy);color:var(--white);padding:0.2rem 0.8rem;font-size:0.75rem;font-weight:600;margin-bottom:1rem;letter-spacing:0.03em}
+
+/* APP */
+#app{display:none}
+header{background:var(--navy);color:var(--white);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+header h1{font-family:Arial,sans-serif;font-size:1.3rem}
+.hdr-left{display:flex;align-items:center;gap:0.8rem}
+.badge{background:var(--teal);color:var(--white);padding:0.15rem 0.6rem;font-size:0.7rem;font-weight:600}
+
+.tab-nav{display:flex;background:var(--navy);padding:0 1rem 0.5rem;gap:0.3rem;flex-wrap:wrap;overflow-x:auto}
+.tab-btn{background:transparent;border:none;color:rgba(255,255,255,0.5);padding:0.4rem 0.8rem;font-size:0.82rem;cursor:pointer;border-bottom:3px solid transparent;font-weight:500;white-space:nowrap}
+.tab-btn.active,.tab-btn:hover{color:var(--white);border-bottom-color:var(--teal)}
+
+main{max-width:960px;margin:0 auto;padding:1.2rem}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* SELECTORS */
+.selectors{display:flex;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end}
+.selectors label{font-weight:600;font-size:0.82rem;color:var(--navy);display:block;margin-bottom:0.2rem}
+.selectors select{padding:0.45rem 0.7rem;border:2px solid var(--border);font-size:0.92rem;background:var(--white);min-width:140px;cursor:pointer}
+.selectors select:focus{border-color:var(--teal);outline:none}
+
+/* SUBJECT FILTER BUTTONS */
+.subj-filters{display:flex;gap:0.4rem;flex-wrap:wrap}
+.subj-btn{padding:0.4rem 0.9rem;border:2px solid var(--border);background:var(--white);font-size:0.82rem;font-weight:600;cursor:pointer;color:#555;transition:all 0.15s}
+.subj-btn.active{color:var(--white)}
+.subj-btn[data-subj="All"].active{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.subj-btn[data-subj="Biology"].active{background:var(--bio);border-color:var(--bio)}
+.subj-btn[data-subj="Chemistry"].active{background:var(--chem);border-color:var(--chem)}
+.subj-btn[data-subj="Physics"].active{background:var(--phys);border-color:var(--phys)}
+.subj-btn:hover{border-color:var(--teal)}
+
+/* UNIT CARDS */
+.unit-list{display:flex;flex-direction:column;gap:0.6rem}
+.unit-card{background:var(--white);overflow:hidden;cursor:pointer;transition:background 0.1s}
+.unit-card:hover{background:#f8f8f8}
+.unit-head{padding:0.8rem 1rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap}
+.unit-code{font-weight:700;font-family:Arial,sans-serif;color:var(--navy);font-size:1rem;min-width:3.5rem}
+.unit-name{font-weight:600;font-size:0.95rem;flex:1}
+.unit-meta{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap}
+.subj-tag{padding:0.1rem 0.5rem;font-size:0.7rem;font-weight:600;color:var(--white)}
+.subj-tag.bio{background:var(--bio)}.subj-tag.chem{background:var(--chem)}.subj-tag.phys{background:var(--phys)}
+.lesson-count{font-size:0.75rem;color:var(--grey);font-weight:600}
+.unit-chevron{font-size:0.8rem;color:var(--grey);transition:transform 0.2s;margin-left:auto}
+.unit-card.expanded .unit-chevron{transform:rotate(90deg)}
+
+.unit-body{display:none;padding:0 1rem 1rem;border-top:1px solid var(--border)}
+.unit-card.expanded .unit-body{display:block}
+
+/* UNIT OVERVIEW SECTION */
+.unit-overview{margin-top:0.8rem;margin-bottom:0.8rem}
+.section-toggle{background:var(--cream);padding:0.5rem 0.8rem;font-weight:700;font-size:0.85rem;color:var(--navy);cursor:pointer;display:flex;align-items:center;gap:0.5rem;width:100%;border:none;text-align:left;font-family:inherit}
+.section-toggle:hover{background:#f0ebe0}
+.section-toggle .chevron{font-size:0.7rem;transition:transform 0.2s}
+.section-toggle.open .chevron{transform:rotate(90deg)}
+.section-content{display:none;padding:0.6rem 0}
+.section-toggle.open+.section-content{display:block}
+
+.file-list{display:flex;flex-direction:column;gap:0.3rem}
+.file-row{display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0.4rem;font-size:0.85rem}
+.file-row:hover{background:var(--cream)}
+.file-badge{padding:0.1rem 0.4rem;font-size:0.65rem;font-weight:700;color:var(--white);flex-shrink:0;text-transform:uppercase;letter-spacing:0.03em}
+.file-badge.ppt{background:var(--coral)}.file-badge.pdf{background:#888}.file-badge.doc{background:var(--teal)}.file-badge.xls{background:var(--bio)}.file-badge.zip{background:var(--navy)}.file-badge.other{background:#aaa}
+.file-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-dl{background:var(--teal);color:var(--white);border:none;padding:0.25rem 0.6rem;font-size:0.75rem;font-weight:600;cursor:pointer;text-decoration:none;flex-shrink:0}
+.file-dl:hover{background:#238b7e}
+.file-dl.primary{background:var(--coral);padding:0.35rem 0.9rem;font-size:0.82rem}
+.file-dl.primary:hover{background:#d4603e}
+
+/* LESSON CARDS */
+.lesson-list{display:flex;flex-direction:column;gap:0.4rem}
+.lesson-card{background:#fafafa;overflow:hidden}
+.lesson-head{padding:0.6rem 0.8rem;cursor:pointer;display:flex;flex-direction:column;gap:0.3rem}
+.lesson-head:hover{background:#f5f5f5}
+.lesson-top{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap}
+.lesson-code{font-weight:700;font-family:Arial,sans-serif;color:var(--navy);font-size:0.9rem}
+.lesson-name{font-weight:500;font-size:0.88rem;flex:1}
+.slide-count{font-size:0.72rem;color:var(--grey);font-weight:600}
+.lesson-chevron{font-size:0.7rem;color:var(--grey);transition:transform 0.2s}
+.lesson-card.expanded .lesson-chevron{transform:rotate(90deg)}
+
+/* PHASE SUMMARY BAR */
+.phase-bar{display:flex;gap:0.25rem;flex-wrap:wrap;align-items:center}
+.phase-pill{padding:0.15rem 0.5rem;font-size:0.68rem;font-weight:600;color:var(--white);display:inline-flex;align-items:center;gap:0.25rem}
+.phase-pill.do_now{background:var(--phase-do-now)}.phase-pill.i_do{background:var(--phase-i-do)}
+.phase-pill.we_do{background:var(--phase-we-do);color:#333}.phase-pill.you_do{background:var(--phase-you-do);color:#333}
+.phase-pill.exit_ticket{background:var(--phase-exit)}.phase-pill.meta{background:#888}
+.phase-arrow{color:var(--grey);font-size:0.65rem}
+.phase-summary-text{font-size:0.72rem;color:var(--grey);margin-top:0.15rem}
+
+.lesson-body{display:none;padding:0.4rem 0.8rem 0.8rem}
+.lesson-card.expanded .lesson-body{display:block}
+
+/* PHASE DETAIL VIEW */
+.phase-section{margin-bottom:0.5rem}
+.phase-label{padding:0.3rem 0.6rem;font-size:0.78rem;font-weight:700;color:var(--white)}
+.phase-label.do_now{background:var(--phase-do-now)}.phase-label.i_do{background:var(--phase-i-do)}
+.phase-label.we_do{background:var(--phase-we-do);color:#333}.phase-label.you_do{background:var(--phase-you-do);color:#333}
+.phase-label.exit_ticket{background:var(--phase-exit)}.phase-label.meta{background:#888}
+.phase-slides{padding:0.3rem 0.6rem;background:var(--white)}
+.phase-slide{font-size:0.8rem;padding:0.2rem 0;color:#444;display:flex;align-items:center;gap:0.4rem}
+.phase-slide .snum{color:var(--grey);font-size:0.72rem;font-weight:600;min-width:2rem}
+.mcq-flag{background:var(--gold);color:#333;padding:0.05rem 0.35rem;font-size:0.6rem;font-weight:700}
+
+/* RESOURCES SECTION IN LESSON */
+.lesson-resources{margin-top:0.6rem;padding-top:0.5rem;border-top:1px solid var(--border)}
+.lesson-resources h4{font-size:0.82rem;color:var(--navy);margin-bottom:0.4rem}
+
+/* ASSESSMENT TAB */
+.assess-section{margin-bottom:1.2rem}
+.assess-section h3{font-family:Arial,sans-serif;color:var(--navy);font-size:1rem;margin-bottom:0.5rem;padding-bottom:0.3rem;border-bottom:2px solid var(--teal)}
+
+/* REVISION TAB */
+.rev-note{background:var(--white);padding:0.6rem 0.8rem;margin-bottom:1rem;font-size:0.85rem;color:var(--grey);border-left:3px solid var(--gold)}
+.rev-section{margin-bottom:1.2rem}
+.rev-section h3{font-family:Arial,sans-serif;color:var(--navy);font-size:1rem;margin-bottom:0.5rem;padding-bottom:0.3rem;border-bottom:2px solid var(--teal)}
+.rev-subgroup{margin-bottom:0.6rem}
+.rev-subgroup h4{font-size:0.85rem;color:var(--grey);margin-bottom:0.3rem;font-weight:600}
+
+/* CURRICULUM + PROGRAMME SUPPORT */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.6rem}
+.doc-card{background:var(--white);padding:0.8rem;display:flex;align-items:center;gap:0.6rem}
+.doc-card .file-name{flex:1;font-size:0.88rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog-section{margin-bottom:1.2rem}
+.prog-section h3{font-family:Arial,sans-serif;color:var(--navy);font-size:1rem;margin-bottom:0.5rem;padding-bottom:0.3rem;border-bottom:2px solid var(--teal)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:2.5rem;color:var(--grey);font-size:0.95rem}
+
+/* LOADING */
+.loading{text-align:center;padding:3rem;color:var(--grey)}
+.loading .spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--teal);animation:spin 0.8s linear infinite;margin-bottom:0.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+footer{text-align:center;padding:1rem;font-size:0.7rem;color:var(--grey);border-top:1px solid var(--border);margin-top:2rem}
+
+/* SEARCH */
+.search-bar{margin-bottom:1rem}
+.search-bar input{width:100%;padding:0.5rem 0.8rem;border:2px solid var(--border);font-size:0.92rem;background:var(--white);font-family:inherit}
+.search-bar input:focus{border-color:var(--teal);outline:none}
+
+@media(max-width:600px){
+  header{padding:0.8rem 1rem}header h1{font-size:1.1rem}
+  .selectors{flex-direction:column}.selectors select{min-width:100%}
+  .unit-head{padding:0.6rem 0.7rem}
+  .phase-bar{gap:0.15rem}
+  .doc-grid{grid-template-columns:1fr}
+  .tab-nav{padding:0 0.5rem 0.5rem}
+  main{padding:0.8rem}
+  .file-row{flex-wrap:wrap}
+  .file-dl{width:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-box">
+    <span class="gate-badge">Kemnal Technology College</span>
+    <h1>Ark Science Mastery</h1>
+    <div class="subtitle">Resource Browser</div>
+    <p>Enter the science department password to continue.</p>
+    <input type="password" id="pw" placeholder="Password" onkeypress="if(event.key==='Enter')checkPw()">
+    <button onclick="checkPw()">Enter</button>
+    <div class="gate-error" id="pwError">Incorrect password. Ask your Head of Science.</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+<header>
+  <div class="hdr-left">
+    <span class="badge">KTC</span>
+    <h1>Ark Science Mastery</h1>
+  </div>
+</header>
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="lessons">Lessons</button>
+  <button class="tab-btn" data-tab="assessments">Assessments</button>
+  <button class="tab-btn" data-tab="revision">Revision</button>
+  <button class="tab-btn" data-tab="curriculum">Curriculum</button>
+  <button class="tab-btn" data-tab="programme">Programme Support</button>
+</nav>
+<main>
+
+<!-- TAB: LESSONS -->
+<div class="tab-content active" id="tab-lessons">
+  <div class="selectors">
+    <div>
+      <label for="yearSelect">Year group</label>
+      <select id="yearSelect" onchange="renderUnits()"></select>
+    </div>
+    <div>
+      <label>Subject</label>
+      <div class="subj-filters" id="subjFilters">
+        <button class="subj-btn active" data-subj="All" onclick="setSubjFilter(this)">All</button>
+        <button class="subj-btn" data-subj="Biology" onclick="setSubjFilter(this)">Biology</button>
+        <button class="subj-btn" data-subj="Chemistry" onclick="setSubjFilter(this)">Chemistry</button>
+        <button class="subj-btn" data-subj="Physics" onclick="setSubjFilter(this)">Physics</button>
+      </div>
+    </div>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="unitSearch" placeholder="Search units and lessons..." oninput="renderUnits()">
+  </div>
+  <div id="unitList" class="unit-list"></div>
+</div>
+
+<!-- TAB: ASSESSMENTS -->
+<div class="tab-content" id="tab-assessments">
+  <div class="selectors">
+    <div>
+      <label for="assessYearSelect">Year group</label>
+      <select id="assessYearSelect" onchange="renderAssessments()"></select>
+    </div>
+  </div>
+  <div id="assessContent"></div>
+</div>
+
+<!-- TAB: REVISION -->
+<div class="tab-content" id="tab-revision">
+  <div class="rev-note">KS4 revision resources (Years 10-11).</div>
+  <div id="revisionContent"></div>
+</div>
+
+<!-- TAB: CURRICULUM -->
+<div class="tab-content" id="tab-curriculum">
+  <div id="curriculumContent"></div>
+</div>
+
+<!-- TAB: PROGRAMME SUPPORT -->
+<div class="tab-content" id="tab-programme">
+  <div id="programmeContent"></div>
+</div>
+
+</main>
+<footer>Kemnal Technology College | Ark Science Mastery | For staff use only</footer>
+</div>
+
+<script>
+/* ===================== PASSWORD GATE ===================== */
+const PASSWORD = 'KTC2026Sci';
+const AUTH_KEY = 'ktc_ark_auth';
+
+function checkPw() {
+  if (document.getElementById('pw').value === PASSWORD) {
+    sessionStorage.setItem(AUTH_KEY, '1');
+    showApp();
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+  }
+}
+
+function showApp() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+if (sessionStorage.getItem(AUTH_KEY) === '1') showApp();
+
+/* ===================== DATA ===================== */
+const PUBLIC_BASE = 'https://pub-be9948953aee4bfcbb2ff1bb20d1755f.r2.dev';
+let DATA = null;
+let currentSubj = 'All';
+
+function fileUrl(file) {
+  if (file.url) return file.url;
+  return PUBLIC_BASE + '/' + file.path.split('/').map(s => encodeURIComponent(s)).join('/');
+}
+
+function fileBadgeType(file) {
+  const t = (file.type || file.file_type || '').toLowerCase();
+  if (t === 'pptx' || t === 'ppt') return 'ppt';
+  if (t === 'pdf') return 'pdf';
+  if (t === 'docx' || t === 'doc') return 'doc';
+  if (t === 'xlsx' || t === 'xls') return 'xls';
+  if (t === 'zip') return 'zip';
+  return 'other';
+}
+
+function fileBadgeLabel(file) {
+  const t = (file.type || file.file_type || '').toUpperCase();
+  if (t === 'PPTX') return 'PPT';
+  if (t === 'DOCX') return 'DOC';
+  if (t === 'XLSX') return 'XLS';
+  return t || 'FILE';
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+/* ===================== SORTING ===================== */
+function sortUnitCode(a, b) {
+  // e.g. "B1.1" vs "C2.3" - sort by subject letter, then numbers
+  const pa = a.split(/[\.\s]/);
+  const pb = b.split(/[\.\s]/);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const va = pa[i] || '';
+    const vb = pb[i] || '';
+    const na = parseFloat(va.replace(/[^0-9.]/g, ''));
+    const nb = parseFloat(vb.replace(/[^0-9.]/g, ''));
+    // Compare letter prefix first
+    const la = va.replace(/[0-9.]/g, '');
+    const lb = vb.replace(/[0-9.]/g, '');
+    if (la !== lb) return la.localeCompare(lb);
+    if (!isNaN(na) && !isNaN(nb) && na !== nb) return na - nb;
+    if (va !== vb) return va.localeCompare(vb);
+  }
+  return 0;
+}
+
+function sortLessonCode(a, b) {
+  // e.g. "B1.1.1" vs "B1.1.10" - sort numerically by last segment
+  const pa = a.split('.');
+  const pb = b.split('.');
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const va = pa[i] || '0';
+    const vb = pb[i] || '0';
+    const la = va.replace(/[0-9]/g, '');
+    const lb = vb.replace(/[0-9]/g, '');
+    if (la !== lb) return la.localeCompare(lb);
+    const na = parseInt(va.replace(/[^0-9]/g, ''), 10) || 0;
+    const nb = parseInt(vb.replace(/[^0-9]/g, ''), 10) || 0;
+    if (na !== nb) return na - nb;
+  }
+  return 0;
+}
+
+function unitsToArray(unitsObj) {
+  if (!unitsObj) return [];
+  return Object.keys(unitsObj).sort(sortUnitCode).map(code => ({
+    code,
+    ...unitsObj[code]
+  }));
+}
+
+function lessonsToArray(lessonsObj) {
+  if (!lessonsObj) return [];
+  return Object.keys(lessonsObj).sort(sortLessonCode).map(code => ({
+    code,
+    ...lessonsObj[code]
+  }));
+}
+
+/* ===================== SUBJECT HELPERS ===================== */
+function subjClass(subject) {
+  const s = (subject || '').toLowerCase();
+  if (s.includes('bio')) return 'bio';
+  if (s.includes('chem')) return 'chem';
+  if (s.includes('phys')) return 'phys';
+  return '';
+}
+
+function setSubjFilter(btn) {
+  document.querySelectorAll('.subj-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentSubj = btn.dataset.subj;
+  renderUnits();
+}
+
+/* ===================== FILE ROW RENDERING ===================== */
+function renderFileRow(file) {
+  const bt = fileBadgeType(file);
+  const bl = fileBadgeLabel(file);
+  const url = fileUrl(file);
+  return `<div class="file-row">
+    <span class="file-badge ${bt}">${bl}</span>
+    <span class="file-name" title="${esc(file.name)}">${esc(file.name)}</span>
+    <a class="file-dl" href="${esc(url)}" target="_blank" rel="noopener">Download</a>
+  </div>`;
+}
+
+function renderFileList(files) {
+  if (!files || files.length === 0) return '';
+  return `<div class="file-list">${files.map(renderFileRow).join('')}</div>`;
+}
+
+/* ===================== PHASE RENDERING ===================== */
+const PHASE_ORDER = ['do_now', 'i_do', 'we_do', 'you_do', 'exit_ticket', 'meta'];
+const PHASE_LABELS = {do_now:'Do Now',i_do:'I Do',we_do:'We Do',you_do:'You Do',exit_ticket:'Exit Ticket',meta:'Meta'};
+
+function renderPhasePills(phases) {
+  if (!phases) return '';
+  let pills = [];
+  for (const key of PHASE_ORDER) {
+    const p = phases[key];
+    if (!p || !p.slides || p.slides.length === 0) continue;
+    pills.push(`<span class="phase-pill ${key}">${esc(p.label || PHASE_LABELS[key])} &middot;${p.slides.length}</span>`);
+  }
+  if (pills.length === 0) return '';
+  return `<div class="phase-bar">${pills.join('<span class="phase-arrow">&#9654;</span>')}</div>`;
+}
+
+function renderPhaseDetail(phases) {
+  if (!phases) return '';
+  let html = '';
+  for (const key of PHASE_ORDER) {
+    const p = phases[key];
+    if (!p || !p.slides || p.slides.length === 0) continue;
+    html += `<div class="phase-section">
+      <div class="phase-label ${key}">${esc(p.label || PHASE_LABELS[key])} (${p.slides.length} slide${p.slides.length !== 1 ? 's' : ''})</div>
+      <div class="phase-slides">`;
+    for (const sl of p.slides) {
+      const mcq = sl.has_mcq ? '<span class="mcq-flag">MCQ</span>' : '';
+      html += `<div class="phase-slide"><span class="snum">S${sl.number}</span>${esc(sl.title || 'Untitled')} ${mcq}</div>`;
+    }
+    html += '</div></div>';
+  }
+  return html;
+}
+
+/* ===================== LESSONS TAB ===================== */
+function renderUnits() {
+  const yearKey = document.getElementById('yearSelect').value;
+  const container = document.getElementById('unitList');
+  const searchTerm = (document.getElementById('unitSearch').value || '').toLowerCase().trim();
+
+  if (!DATA || !DATA.years || !DATA.years[yearKey]) {
+    container.innerHTML = '<div class="empty">Select a year group to view units.</div>';
+    return;
+  }
+
+  const units = unitsToArray(DATA.years[yearKey].units);
+  let filtered = units;
+
+  if (currentSubj !== 'All') {
+    filtered = filtered.filter(u => (u.subject || '').toLowerCase() === currentSubj.toLowerCase());
+  }
+
+  if (searchTerm) {
+    filtered = filtered.filter(u => {
+      const unitMatch = (u.code + ' ' + u.name + ' ' + (u.subject || '')).toLowerCase().includes(searchTerm);
+      if (unitMatch) return true;
+      // Also check lesson names
+      const lessons = lessonsToArray(u.lessons);
+      return lessons.some(l => (l.code + ' ' + l.name).toLowerCase().includes(searchTerm));
+    });
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty">No units match your selection.</div>';
+    return;
+  }
+
+  let html = '';
+  for (const unit of filtered) {
+    const sc = subjClass(unit.subject);
+    const lessons = lessonsToArray(unit.lessons);
+    const lessonCount = lessons.length;
+
+    html += `<div class="unit-card" data-code="${esc(unit.code)}">
+      <div class="unit-head" onclick="toggleUnit(this)">
+        <span class="unit-code">${esc(unit.code)}</span>
+        <span class="unit-name">${esc(unit.name)}</span>
+        <div class="unit-meta">
+          <span class="subj-tag ${sc}">${esc(unit.subject || '')}</span>
+          <span class="lesson-count">${lessonCount} lesson${lessonCount !== 1 ? 's' : ''}</span>
+        </div>
+        <span class="unit-chevron">&#9654;</span>
+      </div>
+      <div class="unit-body">
+        ${renderUnitOverview(unit)}
+        <div class="lesson-list">
+          ${lessons.map(l => renderLessonCard(l, unit)).join('')}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function renderUnitOverview(unit) {
+  let sections = [];
+
+  if (unit.unit_guidance && unit.unit_guidance.length > 0) {
+    sections.push({title: 'Unit Guidance', files: unit.unit_guidance});
+  }
+  if (unit.student_overview && unit.student_overview.length > 0) {
+    sections.push({title: 'Student Overview', files: unit.student_overview});
+  }
+  if (unit.assessment && unit.assessment.length > 0) {
+    sections.push({title: 'Assessment', files: unit.assessment});
+  }
+
+  if (sections.length === 0) return '';
+
+  let html = '<div class="unit-overview">';
+  for (const sec of sections) {
+    const id = 'uo_' + Math.random().toString(36).slice(2, 8);
+    html += `<button class="section-toggle" onclick="toggleSection(this)">
+      <span class="chevron">&#9654;</span> ${esc(sec.title)} (${sec.files.length})
+    </button>
+    <div class="section-content">${renderFileList(sec.files)}</div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderLessonCard(lesson, unit) {
+  const phasePills = renderPhasePills(lesson.phases);
+  const summaryText = lesson.phase_summary ? `<div class="phase-summary-text">${esc(lesson.phase_summary)}</div>` : '';
+  const slideText = lesson.slide_count ? `<span class="slide-count">${lesson.slide_count} slides</span>` : '';
+
+  // Separate main pptx from other files
+  let mainFile = null;
+  let otherFiles = [];
+  if (lesson.files) {
+    for (const f of lesson.files) {
+      if (lesson.main_pptx && f.name === lesson.main_pptx && !mainFile) {
+        mainFile = f;
+      } else {
+        otherFiles.push(f);
+      }
+    }
+    // If main_pptx specified but not found in files, check by extension
+    if (!mainFile && lesson.main_pptx) {
+      for (const f of lesson.files) {
+        const t = (f.type || '').toLowerCase();
+        if ((t === 'pptx' || t === 'ppt') && !mainFile) {
+          mainFile = f;
+          otherFiles = lesson.files.filter(x => x !== f);
+          break;
+        }
+      }
+    }
+    if (!mainFile) otherFiles = lesson.files;
+  }
+
+  let resourcesHtml = '';
+  if (mainFile || otherFiles.length > 0) {
+    resourcesHtml = '<div class="lesson-resources"><h4>Resources</h4>';
+    if (mainFile) {
+      resourcesHtml += `<div class="file-row" style="margin-bottom:0.4rem">
+        <span class="file-badge ppt">PPT</span>
+        <span class="file-name" title="${esc(mainFile.name)}">${esc(mainFile.name)}</span>
+        <a class="file-dl primary" href="${esc(fileUrl(mainFile))}" target="_blank" rel="noopener">Download Lesson</a>
+      </div>`;
+    }
+    if (otherFiles.length > 0) {
+      resourcesHtml += renderFileList(otherFiles);
+    }
+    resourcesHtml += '</div>';
+  }
+
+  return `<div class="lesson-card">
+    <div class="lesson-head" onclick="toggleLesson(this)">
+      <div class="lesson-top">
+        <span class="lesson-code">${esc(lesson.code)}</span>
+        <span class="lesson-name">${esc(lesson.name)}</span>
+        ${slideText}
+        <span class="lesson-chevron">&#9654;</span>
+      </div>
+      ${phasePills}
+      ${summaryText}
+    </div>
+    <div class="lesson-body">
+      ${renderPhaseDetail(lesson.phases)}
+      ${resourcesHtml}
+    </div>
+  </div>`;
+}
+
+/* ===================== TOGGLE HELPERS ===================== */
+function toggleUnit(el) {
+  el.closest('.unit-card').classList.toggle('expanded');
+}
+
+function toggleLesson(el) {
+  el.closest('.lesson-card').classList.toggle('expanded');
+}
+
+function toggleSection(el) {
+  el.classList.toggle('open');
+  const content = el.nextElementSibling;
+  if (content) content.style.display = el.classList.contains('open') ? 'block' : 'none';
+}
+
+/* ===================== ASSESSMENTS TAB ===================== */
+function renderAssessments() {
+  const yearKey = document.getElementById('assessYearSelect').value;
+  const container = document.getElementById('assessContent');
+
+  if (!DATA || !DATA.years || !DATA.years[yearKey]) {
+    container.innerHTML = '<div class="empty">Select a year group.</div>';
+    return;
+  }
+
+  const assess = DATA.years[yearKey].assessments;
+  if (!assess) {
+    container.innerHTML = '<div class="empty">No assessment resources available for this year group.</div>';
+    return;
+  }
+
+  let html = '';
+  const sectionNames = {autumn: 'Autumn Assessments', spring: 'Spring Assessments', resources: 'Assessment Resources'};
+
+  for (const key of ['autumn', 'spring', 'resources']) {
+    const sec = assess[key];
+    if (!sec) continue;
+    const files = sec.files || [];
+    if (files.length === 0) continue;
+
+    html += `<div class="assess-section">
+      <h3>${sectionNames[key] || key}</h3>
+      ${renderFileList(files)}
+    </div>`;
+  }
+
+  // Also include any other keys
+  for (const key of Object.keys(assess)) {
+    if (['autumn', 'spring', 'resources'].includes(key)) continue;
+    const sec = assess[key];
+    if (!sec) continue;
+    const files = sec.files || [];
+    if (files.length === 0) continue;
+    const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    html += `<div class="assess-section">
+      <h3>${esc(label)}</h3>
+      ${renderFileList(files)}
+    </div>`;
+  }
+
+  container.innerHTML = html || '<div class="empty">No assessment resources available for this year group.</div>';
+}
+
+/* ===================== REVISION TAB ===================== */
+function renderRevision() {
+  const container = document.getElementById('revisionContent');
+  if (!DATA || !DATA.revision) {
+    container.innerHTML = '<div class="empty">No revision resources available.</div>';
+    return;
+  }
+
+  const rev = DATA.revision;
+  let html = '';
+
+  // Flashcards
+  if (rev.flashcards) {
+    html += '<div class="rev-section"><h3>Flashcards</h3>';
+    for (const subj of ['biology', 'chemistry', 'physics']) {
+      const files = rev.flashcards[subj];
+      if (files && files.length > 0) {
+        const label = subj.charAt(0).toUpperCase() + subj.slice(1);
+        html += `<div class="rev-subgroup"><h4>${label}</h4>${renderFileList(files)}</div>`;
+      }
+    }
+    html += '</div>';
+  }
+
+  // Command words
+  if (rev.command_words && rev.command_words.length > 0) {
+    html += `<div class="rev-section"><h3>Command Word Practice</h3>${renderFileList(rev.command_words)}</div>`;
+  }
+
+  // Required practicals
+  if (rev.required_practicals) {
+    html += '<div class="rev-section"><h3>Required Practical Checklists</h3>';
+    for (const subj of ['biology', 'chemistry', 'physics']) {
+      const files = rev.required_practicals[subj];
+      if (files && files.length > 0) {
+        const label = subj.charAt(0).toUpperCase() + subj.slice(1);
+        html += `<div class="rev-subgroup"><h4>${label}</h4>${renderFileList(files)}</div>`;
+      }
+    }
+    html += '</div>';
+  }
+
+  // Calculation practice
+  if (rev.calculation_practice && rev.calculation_practice.length > 0) {
+    html += `<div class="rev-section"><h3>Calculation Practice</h3>${renderFileList(rev.calculation_practice)}</div>`;
+  }
+
+  // Templates
+  if (rev.templates && rev.templates.length > 0) {
+    html += `<div class="rev-section"><h3>Templates</h3>${renderFileList(rev.templates)}</div>`;
+  }
+
+  container.innerHTML = html || '<div class="empty">No revision resources available.</div>';
+}
+
+/* ===================== CURRICULUM TAB ===================== */
+function renderCurriculum() {
+  const container = document.getElementById('curriculumContent');
+  if (!DATA || !DATA.curriculum_docs || DATA.curriculum_docs.length === 0) {
+    container.innerHTML = '<div class="empty">No curriculum documents available.</div>';
+    return;
+  }
+
+  let html = '<div class="doc-grid">';
+  for (const doc of DATA.curriculum_docs) {
+    if (doc.type === 'file') {
+      const bt = fileBadgeType(doc);
+      const bl = fileBadgeLabel(doc);
+      html += `<div class="doc-card">
+        <span class="file-badge ${bt}">${bl}</span>
+        <span class="file-name" title="${esc(doc.name)}">${esc(doc.name)}</span>
+        <a class="file-dl" href="${esc(fileUrl(doc))}" target="_blank" rel="noopener">Download</a>
+      </div>`;
+    } else if (doc.type === 'zip' && doc.files) {
+      // Zip with inner files - show each file
+      for (const f of doc.files) {
+        html += `<div class="doc-card">
+          <span class="file-badge ${fileBadgeType(f)}">${fileBadgeLabel(f)}</span>
+          <span class="file-name" title="${esc(f.name)}">${esc(f.name)}</span>
+          <a class="file-dl" href="${esc(fileUrl(f))}" target="_blank" rel="noopener">Download</a>
+        </div>`;
+      }
+    }
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+/* ===================== PROGRAMME SUPPORT TAB ===================== */
+function renderProgramme() {
+  const container = document.getElementById('programmeContent');
+  if (!DATA || !DATA.programme_support) {
+    container.innerHTML = '<div class="empty">No programme support resources available.</div>';
+    return;
+  }
+
+  let html = '';
+  for (const [key, sec] of Object.entries(DATA.programme_support)) {
+    const files = sec.files || [];
+    if (files.length === 0) continue;
+    const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    html += `<div class="prog-section">
+      <h3>${esc(label)}</h3>
+      ${renderFileList(files)}
+    </div>`;
+  }
+
+  container.innerHTML = html || '<div class="empty">No programme support resources available.</div>';
+}
+
+/* ===================== TAB NAVIGATION ===================== */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    const tabId = 'tab-' + btn.dataset.tab;
+    const tabEl = document.getElementById(tabId);
+    if (tabEl) tabEl.classList.add('active');
+  });
+});
+
+/* ===================== POPULATE YEAR SELECTS ===================== */
+function populateYearSelects() {
+  if (!DATA || !DATA.years) return;
+  const years = Object.keys(DATA.years).sort((a, b) => parseInt(a) - parseInt(b));
+
+  for (const selId of ['yearSelect', 'assessYearSelect']) {
+    const sel = document.getElementById(selId);
+    sel.innerHTML = '';
+    for (const y of years) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = 'Year ' + y;
+      sel.appendChild(opt);
+    }
+  }
+}
+
+/* ===================== INIT ===================== */
+function init() {
+  const mainEl = document.querySelector('main');
+  mainEl.innerHTML = '<div class="loading"><div class="spinner"></div><br>Loading resources...</div>';
+
+  fetch('manifest.json')
+    .then(r => {
+      if (!r.ok) throw new Error('Failed to load manifest.json (HTTP ' + r.status + ')');
+      return r.json();
+    })
+    .then(data => {
+      DATA = data;
+      // Restore tabs HTML
+      mainEl.innerHTML = `
+        <div class="tab-content active" id="tab-lessons">
+          <div class="selectors">
+            <div>
+              <label for="yearSelect">Year group</label>
+              <select id="yearSelect" onchange="renderUnits()"></select>
+            </div>
+            <div>
+              <label>Subject</label>
+              <div class="subj-filters" id="subjFilters">
+                <button class="subj-btn active" data-subj="All" onclick="setSubjFilter(this)">All</button>
+                <button class="subj-btn" data-subj="Biology" onclick="setSubjFilter(this)">Biology</button>
+                <button class="subj-btn" data-subj="Chemistry" onclick="setSubjFilter(this)">Chemistry</button>
+                <button class="subj-btn" data-subj="Physics" onclick="setSubjFilter(this)">Physics</button>
+              </div>
+            </div>
+          </div>
+          <div class="search-bar">
+            <input type="text" id="unitSearch" placeholder="Search units and lessons..." oninput="renderUnits()">
+          </div>
+          <div id="unitList" class="unit-list"></div>
+        </div>
+        <div class="tab-content" id="tab-assessments">
+          <div class="selectors">
+            <div>
+              <label for="assessYearSelect">Year group</label>
+              <select id="assessYearSelect" onchange="renderAssessments()"></select>
+            </div>
+          </div>
+          <div id="assessContent"></div>
+        </div>
+        <div class="tab-content" id="tab-revision">
+          <div class="rev-note">KS4 revision resources (Years 10-11).</div>
+          <div id="revisionContent"></div>
+        </div>
+        <div class="tab-content" id="tab-curriculum">
+          <div id="curriculumContent"></div>
+        </div>
+        <div class="tab-content" id="tab-programme">
+          <div id="programmeContent"></div>
+        </div>`;
+
+      // Re-bind tabs after DOM rebuild
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        };
+      });
+
+      populateYearSelects();
+      renderUnits();
+      renderAssessments();
+      renderRevision();
+      renderCurriculum();
+      renderProgramme();
+    })
+    .catch(err => {
+      mainEl.innerHTML = `<div class="empty" style="color:var(--coral)">
+        Could not load resources.<br><br>
+        <span style="font-size:0.8rem;color:var(--grey)">${esc(err.message)}<br><br>
+        Make sure manifest.json is in the same folder as this page.</span>
+      </div>`;
+    });
+}
+
+init();
+</script>
+</body>
+</html>
