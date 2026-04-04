@@ -148,6 +148,35 @@ main{max-width:960px;margin:0 auto;padding:1.2rem}
 .rev-subgroup{margin-bottom:0.6rem}
 .rev-subgroup h4{font-size:0.85rem;color:var(--grey);margin-bottom:0.3rem;font-weight:600}
 
+/* QLA PRIORITY CARDS */
+.qla-intro{background:var(--white);padding:0.8rem 1rem;margin-bottom:1.2rem;font-size:0.85rem;color:var(--grey);border-left:3px solid var(--coral)}
+.qla-intro strong{color:var(--navy)}
+.priority-card{background:var(--white);padding:0.8rem 1rem;margin-bottom:0.5rem}
+.priority-card.red{border-left:4px solid #E76F51;background:#fef0ec}
+.priority-card.amber{border-left:4px solid #E9C46A;background:#fdf6e3}
+.priority-header{display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.4rem}
+.priority-topic{font-weight:700;font-family:Arial,sans-serif;color:var(--navy);font-size:0.95rem}
+.priority-score{font-size:0.78rem;color:var(--grey);font-weight:600}
+.priority-units{font-size:0.72rem;color:var(--grey)}
+.priority-links{display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.3rem}
+.priority-links a{display:inline-block;padding:0.25rem 0.6rem;font-size:0.75rem;font-weight:600;text-decoration:none;color:var(--white);cursor:pointer}
+.priority-links a.ql-ko{background:var(--teal)}
+.priority-links a.ql-ko:hover{background:#238b7e}
+.priority-links a.ql-mq{background:var(--navy)}
+.priority-links a.ql-mq:hover{background:#2a3d66}
+.priority-links a.ql-fc{background:var(--gold);color:#333}
+.priority-links a.ql-fc:hover{background:#d4b44e}
+.priority-links a.ql-unit{background:var(--coral)}
+.priority-links a.ql-unit:hover{background:#d4603e}
+.rev-subject-section{margin-bottom:1.5rem}
+.rev-subject-section h3{font-family:Arial,sans-serif;font-size:1.05rem;margin-bottom:0.6rem;padding-bottom:0.3rem}
+.rev-subject-section h3.bio-heading{color:var(--bio);border-bottom:2px solid var(--bio)}
+.rev-subject-section h3.chem-heading{color:var(--chem);border-bottom:2px solid var(--chem)}
+.rev-subject-section h3.phys-heading{color:var(--phys);border-bottom:2px solid var(--phys)}
+.rev-divider{border:none;border-top:2px solid var(--border);margin:1.5rem 0}
+.flashcard-paper-group{margin-bottom:0.4rem}
+.flashcard-paper-group h5{font-size:0.8rem;color:var(--grey);margin-bottom:0.2rem;font-weight:600}
+
 /* CURRICULUM + PROGRAMME SUPPORT */
 .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.6rem}
 .doc-card{background:var(--white);padding:0.8rem;display:flex;align-items:center;gap:0.6rem}
@@ -328,7 +357,6 @@ footer{text-align:center;padding:1rem;font-size:0.7rem;color:var(--grey);border-
 
 <!-- TAB: REVISION -->
 <div class="tab-content" id="tab-revision">
-  <div class="rev-note">KS4 revision resources (Years 10-11).</div>
   <div id="revisionContent"></div>
 </div>
 
@@ -785,6 +813,122 @@ function renderAssessments() {
   container.innerHTML = html || '<div class="empty">No assessment resources available for this year group.</div>';
 }
 
+/* ===================== FILE EXT HELPER ===================== */
+function fileExt(file) {
+  const t = (file.type || file.file_type || '').toLowerCase();
+  if (t) return t;
+  const n = (file.name || '');
+  const dot = n.lastIndexOf('.');
+  return dot >= 0 ? n.slice(dot + 1).toLowerCase() : '';
+}
+
+/* ===================== QLA PRIORITY DATA ===================== */
+const QLA_PRIORITIES = {
+  biology: [
+    {topic: "Homeostasis and response", score: "17%", tier: "Combined Higher", rag: "red", ark_units: ["B5.1"]},
+    {topic: "Inheritance, variation and evolution", score: "25%", tier: "Combined Higher", rag: "red", ark_units: ["B5.2", "B5.3", "B5.4"]},
+    {topic: "Plant hormones", score: "31%", tier: "Combined Higher", rag: "red", ark_units: ["B5.1"]},
+    {topic: "Reproduction", score: "33%", tier: "Biology Higher", rag: "red", ark_units: ["B5.2"]},
+    {topic: "Ecology", score: "47%", tier: "Combined Higher", rag: "amber", ark_units: ["B4.5"]},
+  ],
+  chemistry: [
+    {topic: "Chemical analysis", score: "7%", tier: "Combined Foundation", rag: "red", ark_units: ["C5.4"]},
+    {topic: "Organic chemistry", score: "14%", tier: "Combined Foundation", rag: "red", ark_units: ["C5.1"]},
+    {topic: "Rate and extent of chemical change", score: "20%", tier: "Combined Higher", rag: "red", ark_units: ["C5.2"]},
+    {topic: "Synthetic and naturally occurring polymers", score: "25%", tier: "Chemistry Higher", rag: "red", ark_units: ["C5.1"]},
+    {topic: "Using resources", score: "27%", tier: "Combined Higher", rag: "red", ark_units: ["C5.3"]},
+    {topic: "Atmosphere composition and evolution", score: "40%", tier: "Combined Higher", rag: "amber", ark_units: ["C5.3"]},
+    {topic: "Reversible reactions", score: "44%", tier: "Chemistry Higher", rag: "amber", ark_units: ["C5.2"]},
+  ],
+  physics: [
+    {topic: "Forces", score: "8%", tier: "Combined Foundation", rag: "red", ark_units: ["P4.3", "P5.2"]},
+    {topic: "Waves", score: "17%", tier: "Combined Higher", rag: "red", ark_units: ["P5.1"]},
+    {topic: "Magnetism and electromagnetism", score: "17%", tier: "Combined Higher", rag: "red", ark_units: ["P4.4"]},
+    {topic: "The motor effect", score: "33%", tier: "Physics Higher", rag: "red", ark_units: ["P5.2"]},
+    {topic: "Pressure and pressure differences", score: "33%", tier: "Physics Higher", rag: "red", ark_units: ["P4.1"]},
+    {topic: "Induced potential", score: "38%", tier: "Physics Higher", rag: "red", ark_units: ["P5.2"]},
+    {topic: "Forces and motion / Momentum", score: "42%", tier: "Physics Higher", rag: "amber", ark_units: ["P4.3"]},
+  ]
+};
+
+/* ===================== QLA HELPERS ===================== */
+function findUnitData(unitCode) {
+  if (!DATA || !DATA.years) return null;
+  for (const yearKey of Object.keys(DATA.years)) {
+    const units = DATA.years[yearKey].units || {};
+    if (units[unitCode]) return {year: yearKey, unit: units[unitCode], code: unitCode};
+  }
+  return null;
+}
+
+function findKnowledgeOrganiser(unitData) {
+  if (!unitData || !unitData.unit.student_overview) return null;
+  // Prefer PDF for quick viewing
+  const files = unitData.unit.student_overview.filter(f =>
+    f.name.toLowerCase().includes('knowledge organiser')
+  );
+  return files.find(f => f.name.endsWith('.pdf')) || files[0] || null;
+}
+
+function findMasteryQuiz(unitData) {
+  if (!unitData || !unitData.unit.assessment) return null;
+  const files = unitData.unit.assessment.filter(f => {
+    const n = f.name.toLowerCase();
+    return n.includes('mastery quiz') && !n.includes(' ms.') && !n.includes(' ms ') && !n.endsWith(' ms.pdf') && !n.endsWith(' ms.docx');
+  });
+  // Prefer .docx over .pdf, prefer CS over SS
+  const docx = files.filter(f => f.name.endsWith('.docx'));
+  if (docx.length > 0) return docx[0];
+  return files[0] || null;
+}
+
+function findFlashcardsForSubject(subject) {
+  if (!DATA || !DATA.revision || !DATA.revision.flashcards) return null;
+  const fc = DATA.revision.flashcards[subject];
+  if (!fc || fc.length === 0) return null;
+  // Return Paper 2 flashcards (these are P2 topics)
+  const p2 = fc.filter(f => f.name.toLowerCase().includes('paper 2'));
+  const pptx = p2.find(f => f.name.endsWith('.pptx'));
+  return pptx || p2[0] || fc[0];
+}
+
+function navigateToUnit(unitCode) {
+  // Switch to Lessons tab, set year, filter to subject, expand the unit
+  const yearNum = unitCode.match(/[45]/);
+  const yearKey = yearNum && unitCode.includes('5') ? '11' : '10';
+  const subjLetter = unitCode.charAt(0);
+  const subjName = subjLetter === 'B' ? 'Biology' : subjLetter === 'C' ? 'Chemistry' : 'Physics';
+
+  // Switch tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const lessonsBtn = document.querySelector('.tab-btn[data-tab="lessons"]');
+  if (lessonsBtn) lessonsBtn.classList.add('active');
+  const lessonsTab = document.getElementById('tab-lessons');
+  if (lessonsTab) lessonsTab.classList.add('active');
+
+  // Set year
+  const yearSelect = document.getElementById('yearSelect');
+  if (yearSelect) yearSelect.value = yearKey;
+
+  // Set subject filter
+  currentSubj = subjName;
+  document.querySelectorAll('.subj-btn').forEach(b => {
+    b.classList.remove('active');
+    if (b.dataset.subj === subjName) b.classList.add('active');
+  });
+
+  // Render then expand
+  renderUnits();
+  setTimeout(() => {
+    const card = document.querySelector(`.unit-card[data-code="${unitCode}"]`);
+    if (card) {
+      card.classList.add('expanded');
+      card.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  }, 100);
+}
+
 /* ===================== REVISION TAB ===================== */
 function renderRevision() {
   const container = document.getElementById('revisionContent');
@@ -796,11 +940,114 @@ function renderRevision() {
   const rev = DATA.revision;
   let html = '';
 
-  // Flashcards
+  /* ---- PRIORITY TOPICS SECTION ---- */
+  html += `<div class="qla-intro">
+    <strong>Priority Topics</strong> — Based on Gold Mock QLA data (March 2026). Topics are ranked by how urgently they need revision. Scores show the average mark on that topic area.
+  </div>`;
+
+  const subjectConfig = [
+    {key: 'biology', label: 'Biology', headingClass: 'bio-heading'},
+    {key: 'chemistry', label: 'Chemistry', headingClass: 'chem-heading'},
+    {key: 'physics', label: 'Physics', headingClass: 'phys-heading'},
+  ];
+
+  for (const subj of subjectConfig) {
+    const priorities = QLA_PRIORITIES[subj.key];
+    if (!priorities || priorities.length === 0) continue;
+
+    html += `<div class="rev-subject-section">
+      <h3 class="${subj.headingClass}">${esc(subj.label)} Priority Topics</h3>`;
+
+    for (const p of priorities) {
+      // Build quick links for each ark unit
+      let linksHtml = '';
+      const unitsSeen = new Set();
+
+      for (const unitCode of p.ark_units) {
+        const ud = findUnitData(unitCode);
+        if (!ud) continue;
+
+        const ko = findKnowledgeOrganiser(ud);
+        const mq = findMasteryQuiz(ud);
+
+        if (ko) {
+          linksHtml += `<a class="ql-ko" href="${esc(fileUrl(ko))}" target="_blank" rel="noopener" title="${esc(unitCode)} Knowledge Organiser">KO ${esc(unitCode)}</a>`;
+        }
+        if (mq) {
+          const mqPreview = previewUrl(mq);
+          const mqUrl = mqPreview || fileUrl(mq);
+          linksHtml += `<a class="ql-mq" href="${esc(mqUrl)}" target="_blank" rel="noopener" title="${esc(unitCode)} Mastery Quiz">Quiz ${esc(unitCode)}</a>`;
+        }
+        unitsSeen.add(unitCode);
+      }
+
+      // Flashcard link for the subject
+      const fc = findFlashcardsForSubject(subj.key);
+      if (fc) {
+        linksHtml += `<a class="ql-fc" href="${esc(fileUrl(fc))}" target="_blank" rel="noopener" title="Paper 2 Flashcards">Flashcards</a>`;
+      }
+
+      // View unit links
+      for (const unitCode of p.ark_units) {
+        linksHtml += `<a class="ql-unit" href="javascript:void(0)" onclick="navigateToUnit('${esc(unitCode)}')" title="View ${esc(unitCode)} lessons">View ${esc(unitCode)} lessons</a>`;
+      }
+
+      const unitLabels = p.ark_units.map(code => {
+        const ud = findUnitData(code);
+        return ud ? `${code} ${ud.unit.name}` : code;
+      }).join(', ');
+
+      html += `<div class="priority-card ${p.rag}">
+        <div class="priority-header">
+          <span class="priority-topic">${esc(p.topic)}</span>
+          <span class="priority-score">${esc(p.score)} on ${esc(p.tier)}</span>
+        </div>
+        <div class="priority-units">Ark units: ${esc(unitLabels)}</div>
+        <div class="priority-links">${linksHtml}</div>
+      </div>`;
+    }
+
+    html += '</div>';
+  }
+
+  /* ---- DIVIDER ---- */
+  html += '<hr class="rev-divider">';
+
+  /* ---- REVISION RESOURCES SECTION ---- */
+  html += '<h2 style="font-family:Arial,sans-serif;color:var(--navy);font-size:1.15rem;margin-bottom:1rem">Revision Resources</h2>';
+
+  // Flashcards grouped by subject with Paper 1 / Paper 2 split
   if (rev.flashcards) {
     html += '<div class="rev-section"><h3>Flashcards</h3>';
     for (const subj of ['biology', 'chemistry', 'physics']) {
       const files = rev.flashcards[subj];
+      if (!files || files.length === 0) continue;
+      const label = subj.charAt(0).toUpperCase() + subj.slice(1);
+      html += `<div class="rev-subgroup"><h4>${label}</h4>`;
+
+      const p1 = files.filter(f => f.name.toLowerCase().includes('paper 1'));
+      const p2 = files.filter(f => f.name.toLowerCase().includes('paper 2'));
+      const other = files.filter(f => !f.name.toLowerCase().includes('paper 1') && !f.name.toLowerCase().includes('paper 2'));
+
+      if (p1.length > 0) {
+        html += `<div class="flashcard-paper-group"><h5>Paper 1</h5>${renderFileList(p1)}</div>`;
+      }
+      if (p2.length > 0) {
+        html += `<div class="flashcard-paper-group"><h5>Paper 2</h5>${renderFileList(p2)}</div>`;
+      }
+      if (other.length > 0) {
+        html += renderFileList(other);
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // Required practicals by subject
+  if (rev.required_practicals) {
+    html += '<div class="rev-section"><h3>Required Practicals</h3>';
+    for (const subj of ['biology', 'chemistry', 'physics']) {
+      const files = rev.required_practicals[subj];
       if (files && files.length > 0) {
         const label = subj.charAt(0).toUpperCase() + subj.slice(1);
         html += `<div class="rev-subgroup"><h4>${label}</h4>${renderFileList(files)}</div>`;
@@ -814,27 +1061,14 @@ function renderRevision() {
     html += `<div class="rev-section"><h3>Command Word Practice</h3>${renderFileList(rev.command_words)}</div>`;
   }
 
-  // Required practicals
-  if (rev.required_practicals) {
-    html += '<div class="rev-section"><h3>Required Practical Checklists</h3>';
-    for (const subj of ['biology', 'chemistry', 'physics']) {
-      const files = rev.required_practicals[subj];
-      if (files && files.length > 0) {
-        const label = subj.charAt(0).toUpperCase() + subj.slice(1);
-        html += `<div class="rev-subgroup"><h4>${label}</h4>${renderFileList(files)}</div>`;
-      }
-    }
-    html += '</div>';
-  }
-
   // Calculation practice
   if (rev.calculation_practice && rev.calculation_practice.length > 0) {
     html += `<div class="rev-section"><h3>Calculation Practice</h3>${renderFileList(rev.calculation_practice)}</div>`;
   }
 
-  // Templates
+  // Revision planning (templates)
   if (rev.templates && rev.templates.length > 0) {
-    html += `<div class="rev-section"><h3>Templates</h3>${renderFileList(rev.templates)}</div>`;
+    html += `<div class="rev-section"><h3>Revision Planning</h3>${renderFileList(rev.templates)}</div>`;
   }
 
   container.innerHTML = html || '<div class="empty">No revision resources available.</div>';
@@ -969,7 +1203,6 @@ function init() {
           <div id="assessContent"></div>
         </div>
         <div class="tab-content" id="tab-revision">
-          <div class="rev-note">KS4 revision resources (Years 10-11).</div>
           <div id="revisionContent"></div>
         </div>
         <div class="tab-content" id="tab-curriculum">
