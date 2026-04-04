@@ -1016,59 +1016,62 @@ function renderRevision() {
   /* ---- REVISION RESOURCES SECTION ---- */
   html += '<h2 style="font-family:Arial,sans-serif;color:var(--navy);font-size:1.15rem;margin-bottom:1rem">Revision Resources</h2>';
 
-  // Flashcards grouped by subject with Paper 1 / Paper 2 split
+  function revDropdown(id, title, count, innerHtml) {
+    return `<div class="rev-section">
+      <button class="section-toggle" onclick="this.classList.toggle('open')">
+        <span class="chevron">&#9654;</span> ${esc(title)} <span style="color:var(--grey);font-weight:400;font-size:0.82rem">(${count})</span>
+      </button>
+      <div class="section-content">${innerHtml}</div>
+    </div>`;
+  }
+
+  // Flashcards
   if (rev.flashcards) {
-    html += '<div class="rev-section"><h3>Flashcards</h3>';
+    let fcHtml = '';
+    let fcCount = 0;
     for (const subj of ['biology', 'chemistry', 'physics']) {
       const files = rev.flashcards[subj];
       if (!files || files.length === 0) continue;
+      fcCount += files.length;
       const label = subj.charAt(0).toUpperCase() + subj.slice(1);
-      html += `<div class="rev-subgroup"><h4>${label}</h4>`;
-
       const p1 = files.filter(f => f.name.toLowerCase().includes('paper 1'));
       const p2 = files.filter(f => f.name.toLowerCase().includes('paper 2'));
-      const other = files.filter(f => !f.name.toLowerCase().includes('paper 1') && !f.name.toLowerCase().includes('paper 2'));
-
-      if (p1.length > 0) {
-        html += `<div class="flashcard-paper-group"><h5>Paper 1</h5>${renderFileList(p1)}</div>`;
-      }
-      if (p2.length > 0) {
-        html += `<div class="flashcard-paper-group"><h5>Paper 2</h5>${renderFileList(p2)}</div>`;
-      }
-      if (other.length > 0) {
-        html += renderFileList(other);
-      }
-      html += '</div>';
+      fcHtml += `<div class="rev-subgroup"><h4>${label}</h4>`;
+      if (p1.length > 0) fcHtml += `<div style="margin-left:0.5rem"><strong style="font-size:0.78rem;color:var(--grey)">Paper 1</strong>${renderFileList(p1)}</div>`;
+      if (p2.length > 0) fcHtml += `<div style="margin-left:0.5rem"><strong style="font-size:0.78rem;color:var(--grey)">Paper 2</strong>${renderFileList(p2)}</div>`;
+      fcHtml += '</div>';
     }
-    html += '</div>';
+    html += revDropdown('fc', 'Flashcards', fcCount + ' files', fcHtml);
   }
 
-  // Required practicals by subject
+  // Required practicals
   if (rev.required_practicals) {
-    html += '<div class="rev-section"><h3>Required Practicals</h3>';
+    let rpHtml = '';
+    let rpCount = 0;
     for (const subj of ['biology', 'chemistry', 'physics']) {
       const files = rev.required_practicals[subj];
       if (files && files.length > 0) {
+        rpCount += files.length;
         const label = subj.charAt(0).toUpperCase() + subj.slice(1);
-        html += `<div class="rev-subgroup"><h4>${label}</h4>${renderFileList(files)}</div>`;
+        rpHtml += `<div class="rev-subgroup"><h4>${label}</h4>${renderFileList(files)}</div>`;
       }
     }
-    html += '</div>';
+    html += revDropdown('rp', 'Required Practical Checklists', rpCount + ' files', rpHtml);
   }
 
   // Command words
   if (rev.command_words && rev.command_words.length > 0) {
-    html += `<div class="rev-section"><h3>Command Word Practice</h3>${renderFileList(rev.command_words)}</div>`;
+    html += revDropdown('cw', 'Command Word Practice', rev.command_words.length + ' files', renderFileList(rev.command_words));
   }
 
   // Calculation practice
   if (rev.calculation_practice && rev.calculation_practice.length > 0) {
-    html += `<div class="rev-section"><h3>Calculation Practice</h3>${renderFileList(rev.calculation_practice)}</div>`;
+    html += revDropdown('cp', 'Calculation Practice', rev.calculation_practice.length + ' files', renderFileList(rev.calculation_practice));
   }
 
-  // Revision planning (templates)
+  // Revision planning
   if (rev.templates && rev.templates.length > 0) {
-    html += `<div class="rev-section"><h3>Revision Planning</h3>${renderFileList(rev.templates)}</div>`;
+    html += revDropdown('rpl', 'Revision Planning', rev.templates.length + ' files', renderFileList(rev.templates));
   }
 
   container.innerHTML = html || '<div class="empty">No revision resources available.</div>';
