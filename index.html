@@ -205,7 +205,8 @@ footer{text-align:center;padding:1rem;font-size:0.7rem;color:var(--grey);border-
   </div>
 </header>
 <nav class="tab-nav">
-  <button class="tab-btn active" data-tab="lessons">Lessons</button>
+  <button class="tab-btn active" data-tab="start">Start Here</button>
+  <button class="tab-btn" data-tab="lessons">Lessons</button>
   <button class="tab-btn" data-tab="assessments">Assessments</button>
   <button class="tab-btn" data-tab="revision">Revision</button>
   <button class="tab-btn" data-tab="curriculum">Curriculum</button>
@@ -213,8 +214,74 @@ footer{text-align:center;padding:1rem;font-size:0.7rem;color:var(--grey);border-
 </nav>
 <main>
 
+<!-- TAB: START HERE -->
+<div class="tab-content active" id="tab-start">
+  <h2 style="font-family:Arial,sans-serif;color:var(--navy);font-size:1.3rem;margin-bottom:1rem">Welcome to Ark Science Mastery</h2>
+  <p style="color:var(--grey);font-size:0.9rem;margin-bottom:1.5rem">Everything you need to plan and deliver Science Mastery lessons, all in one place. Here's how to get started.</p>
+
+  <div style="display:flex;flex-direction:column;gap:0.8rem;margin-bottom:2rem">
+
+    <div style="background:var(--white);padding:1rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="background:var(--phase-do-now);color:var(--white);width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0">1</div>
+      <div>
+        <div style="font-weight:700;color:var(--navy);font-family:Arial,sans-serif;margin-bottom:0.2rem">Pick your year and unit</div>
+        <div style="font-size:0.85rem;color:var(--grey)">Go to the <strong>Lessons</strong> tab. Select your year group and filter by subject. Click a unit to open it.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--white);padding:1rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="background:var(--phase-i-do);color:var(--white);width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0">2</div>
+      <div>
+        <div style="font-weight:700;color:var(--navy);font-family:Arial,sans-serif;margin-bottom:0.2rem">Read the Unit Guidance first</div>
+        <div style="font-size:0.85rem;color:var(--grey)">Inside each unit, open <strong>Unit Guidance</strong> to find the planning proforma and preparation booklet. This tells you the sequencing, prior knowledge, and common misconceptions.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--white);padding:1rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="background:var(--phase-we-do);color:var(--white);width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0">3</div>
+      <div>
+        <div style="font-weight:700;color:var(--navy);font-family:Arial,sans-serif;margin-bottom:0.2rem">Follow the lesson flow</div>
+        <div style="font-size:0.85rem;color:var(--grey)">Each lesson follows the same structure: <strong>Do Now</strong> (retrieval) > <strong>I Do</strong> (teacher input) > <strong>We Do</strong> (guided practice) > <strong>You Do</strong> (independent work) > <strong>Exit Ticket</strong> (check understanding). The coloured bars show you exactly how many slides are in each phase.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--white);padding:1rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="background:var(--phase-you-do);color:#333;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0">4</div>
+      <div>
+        <div style="font-weight:700;color:var(--navy);font-family:Arial,sans-serif;margin-bottom:0.2rem">Preview or download</div>
+        <div style="font-size:0.85rem;color:var(--grey)">Every file has two buttons: <strong>Preview</strong> opens it in your browser (no download needed) and <strong>Download</strong> saves it to your computer. The main lesson PowerPoint is highlighted at the top of each lesson.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--white);padding:1rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="background:var(--phase-exit);color:var(--white);width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0">5</div>
+      <div>
+        <div style="font-weight:700;color:var(--navy);font-family:Arial,sans-serif;margin-bottom:0.2rem">Use the other tabs</div>
+        <div style="font-size:0.85rem;color:var(--grey)"><strong>Assessments</strong> has diagnostic tests per year group. <strong>Revision</strong> has flashcards, required practical checklists, and command word practice for KS4. <strong>Curriculum</strong> has the long-term plan, curriculum map, and teacher guide.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background:var(--white);padding:1rem;border-left:3px solid var(--gold)">
+    <div style="font-weight:700;color:var(--navy);font-family:Arial,sans-serif;font-size:0.9rem;margin-bottom:0.4rem">Lesson structure at a glance</div>
+    <div style="display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center;margin-bottom:0.5rem">
+      <span style="background:var(--phase-do-now);color:var(--white);padding:0.25rem 0.6rem;font-size:0.78rem;font-weight:600">Do Now</span>
+      <span style="color:var(--grey);font-size:0.8rem">></span>
+      <span style="background:var(--phase-i-do);color:var(--white);padding:0.25rem 0.6rem;font-size:0.78rem;font-weight:600">I Do</span>
+      <span style="color:var(--grey);font-size:0.8rem">></span>
+      <span style="background:var(--phase-we-do);color:var(--white);padding:0.25rem 0.6rem;font-size:0.78rem;font-weight:600">We Do</span>
+      <span style="color:var(--grey);font-size:0.8rem">></span>
+      <span style="background:var(--phase-you-do);color:#333;padding:0.25rem 0.6rem;font-size:0.78rem;font-weight:600">You Do</span>
+      <span style="color:var(--grey);font-size:0.8rem">></span>
+      <span style="background:var(--phase-exit);color:var(--white);padding:0.25rem 0.6rem;font-size:0.78rem;font-weight:600">Exit Ticket</span>
+    </div>
+    <div style="font-size:0.82rem;color:var(--grey)">Every lesson PowerPoint follows this sequence. The <strong>Do Now</strong> retrieves prior knowledge. <strong>I Do</strong> is your teacher input. <strong>We Do</strong> is guided practice together. <strong>You Do</strong> is independent work (worksheets, activities). The <strong>Exit Ticket</strong> checks if it stuck.</div>
+  </div>
+</div>
+
 <!-- TAB: LESSONS -->
-<div class="tab-content active" id="tab-lessons">
+<div class="tab-content" id="tab-lessons">
   <div class="selectors">
     <div>
       <label for="yearSelect">Year group</label>
