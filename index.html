@@ -91,6 +91,8 @@ main{max-width:960px;margin:0 auto;padding:1.2rem}
 .file-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .file-dl{background:var(--teal);color:var(--white);border:none;padding:0.25rem 0.6rem;font-size:0.75rem;font-weight:600;cursor:pointer;text-decoration:none;flex-shrink:0}
 .file-dl:hover{background:#238b7e}
+.file-dl.preview{background:var(--navy)}
+.file-dl.preview:hover{background:#2a3d66}
 .file-dl.primary{background:var(--coral);padding:0.35rem 0.9rem;font-size:0.82rem}
 .file-dl.primary:hover{background:#d4603e}
 
@@ -390,13 +392,26 @@ function setSubjFilter(btn) {
 }
 
 /* ===================== FILE ROW RENDERING ===================== */
+function previewUrl(file) {
+  const url = fileUrl(file);
+  const ext = fileExt(file);
+  if (ext === 'pdf') return url;
+  if (['pptx','docx','xlsx','ppt','doc','xls'].includes(ext)) {
+    return 'https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(url);
+  }
+  return null;
+}
+
 function renderFileRow(file) {
   const bt = fileBadgeType(file);
   const bl = fileBadgeLabel(file);
   const url = fileUrl(file);
+  const pUrl = previewUrl(file);
+  const previewBtn = pUrl ? `<a class="file-dl preview" href="${esc(pUrl)}" target="_blank" rel="noopener">Preview</a>` : '';
   return `<div class="file-row">
     <span class="file-badge ${bt}">${bl}</span>
     <span class="file-name" title="${esc(file.name)}">${esc(file.name)}</span>
+    ${previewBtn}
     <a class="file-dl" href="${esc(url)}" target="_blank" rel="noopener">Download</a>
   </div>`;
 }
@@ -562,9 +577,12 @@ function renderLessonCard(lesson, unit) {
   if (mainFile || otherFiles.length > 0) {
     resourcesHtml = '<div class="lesson-resources"><h4>Resources</h4>';
     if (mainFile) {
+      const mainPreview = previewUrl(mainFile);
+      const mainPreviewBtn = mainPreview ? `<a class="file-dl preview" href="${esc(mainPreview)}" target="_blank" rel="noopener">Preview</a>` : '';
       resourcesHtml += `<div class="file-row" style="margin-bottom:0.4rem">
         <span class="file-badge ppt">PPT</span>
         <span class="file-name" title="${esc(mainFile.name)}">${esc(mainFile.name)}</span>
+        ${mainPreviewBtn}
         <a class="file-dl primary" href="${esc(fileUrl(mainFile))}" target="_blank" rel="noopener">Download Lesson</a>
       </div>`;
     }
