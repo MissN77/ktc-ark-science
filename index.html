@@ -376,24 +376,54 @@ footer{text-align:center;padding:1rem;font-size:0.7rem;color:var(--grey);border-
 
 <script>
 /* ===================== PASSWORD GATE ===================== */
-const PASSWORD = 'KTC2026Sci';
+const STAFF_PASSWORD = 'KTC2026Sci';
+const STUDENT_PASSWORD = 'KTCrevise26';
 const AUTH_KEY = 'ktc_ark_auth';
+const ROLE_KEY = 'ktc_ark_role';
+let currentRole = 'student';
 
 function checkPw() {
-  if (document.getElementById('pw').value === PASSWORD) {
+  const val = document.getElementById('pw').value;
+  if (val === STAFF_PASSWORD) {
     sessionStorage.setItem(AUTH_KEY, '1');
+    sessionStorage.setItem(ROLE_KEY, 'staff');
+    currentRole = 'staff';
+    showApp();
+  } else if (val === STUDENT_PASSWORD) {
+    sessionStorage.setItem(AUTH_KEY, '1');
+    sessionStorage.setItem(ROLE_KEY, 'student');
+    currentRole = 'student';
     showApp();
   } else {
     document.getElementById('pwError').style.display = 'block';
   }
 }
 
+function applyRoleView() {
+  const app = document.getElementById('app');
+  app.setAttribute('data-role', currentRole);
+  if (currentRole === 'student') {
+    // Hide all tabs except Revision
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const t = btn.getAttribute('data-tab');
+      if (t !== 'revision') btn.style.display = 'none';
+    });
+    // Force navigation to Revision tab
+    const revBtn = document.querySelector('[data-tab="revision"]');
+    if (revBtn) revBtn.click();
+  }
+}
+
 function showApp() {
   document.getElementById('gate').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  applyRoleView();
 }
 
-if (sessionStorage.getItem(AUTH_KEY) === '1') showApp();
+if (sessionStorage.getItem(AUTH_KEY) === '1') {
+  currentRole = sessionStorage.getItem(ROLE_KEY) || 'student';
+  showApp();
+}
 
 /* ===================== DATA ===================== */
 const PUBLIC_BASE = 'https://pub-be9948953aee4bfcbb2ff1bb20d1755f.r2.dev';
@@ -949,9 +979,10 @@ function renderRevision() {
   let html = '';
 
   /* ---- PRIORITY TOPICS SECTION ---- */
-  html += `<div class="qla-intro">
-    <strong>Priority Topics</strong> — Based on Gold Mock QLA data (March 2026). Topics are ranked by how urgently they need revision. Scores show the average mark on that topic area.
-  </div>`;
+  const introText = currentRole === 'staff'
+    ? '<strong>Priority Topics</strong> — Based on Gold Mock QLA data (March 2026). Topics are ranked by how urgently they need revision. Scores show the average mark on that topic area.'
+    : '<strong>Priority Topics</strong> — These are the topics to focus your revision on first. Red means highest priority, amber means work on these next. Click the links to open the knowledge organiser, mastery quiz, or flashcards for each topic.';
+  html += `<div class="qla-intro">${introText}</div>`;
 
   const subjectConfig = [
     {key: 'biology', label: 'Biology', headingClass: 'bio-heading'},
@@ -1003,12 +1034,19 @@ function renderRevision() {
         return ud ? `${code} ${ud.unit.name}` : code;
       }).join(', ');
 
+      const scoreHtml = currentRole === 'staff'
+        ? `<span class="priority-score">${esc(p.score)} on ${esc(p.tier)}</span>`
+        : '';
+      const unitsHtml = currentRole === 'staff'
+        ? `<div class="priority-units">Ark units: ${esc(unitLabels)}</div>`
+        : '';
+
       html += `<div class="priority-card ${p.rag}">
         <div class="priority-header">
           <span class="priority-topic">${esc(p.topic)}</span>
-          <span class="priority-score">${esc(p.score)} on ${esc(p.tier)}</span>
+          ${scoreHtml}
         </div>
-        <div class="priority-units">Ark units: ${esc(unitLabels)}</div>
+        ${unitsHtml}
         <div class="priority-links">${linksHtml}</div>
       </div>`;
     }
