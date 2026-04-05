@@ -995,10 +995,8 @@ function renderRevision() {
         linksHtml += `<a class="ql-fc" href="${esc(fileUrl(fc))}" target="_blank" rel="noopener" title="Paper 2 Flashcards">Flashcards</a>`;
       }
 
-      // View unit links
-      for (const unitCode of p.ark_units) {
-        linksHtml += `<a class="ql-unit" href="javascript:void(0)" onclick="navigateToUnit('${esc(unitCode)}')" title="View ${esc(unitCode)} lessons">View ${esc(unitCode)} lessons</a>`;
-      }
+      // Note: "View lessons" link removed from student-facing Revision tab.
+      // Teachers access full unit materials via the Lessons tab.
 
       const unitLabels = p.ark_units.map(code => {
         const ud = findUnitData(code);
