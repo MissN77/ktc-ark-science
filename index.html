@@ -87,7 +87,7 @@ main{max-width:960px;margin:0 auto;padding:1.2rem}
 .file-row{display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0.4rem;font-size:0.85rem}
 .file-row:hover{background:var(--cream)}
 .file-badge{padding:0.1rem 0.4rem;font-size:0.65rem;font-weight:700;color:var(--white);flex-shrink:0;text-transform:uppercase;letter-spacing:0.03em}
-.file-badge.ppt{background:var(--coral)}.file-badge.pdf{background:#888}.file-badge.doc{background:var(--teal)}.file-badge.xls{background:var(--bio)}.file-badge.zip{background:var(--navy)}.file-badge.other{background:#aaa}
+.file-badge.ppt{background:var(--coral)}.file-badge.pdf{background:#888}.file-badge.doc{background:var(--teal)}.file-badge.xls{background:var(--bio)}.file-badge.zip{background:var(--navy)}.file-badge.youtube{background:#c00}.file-badge.other{background:#aaa}
 .file-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .file-dl{background:var(--teal);color:var(--white);border:none;padding:0.25rem 0.6rem;font-size:0.75rem;font-weight:600;cursor:pointer;text-decoration:none;flex-shrink:0}
 .file-dl:hover{background:#238b7e}
@@ -442,6 +442,7 @@ function fileBadgeType(file) {
   if (t === 'docx' || t === 'doc') return 'doc';
   if (t === 'xlsx' || t === 'xls') return 'xls';
   if (t === 'zip') return 'zip';
+  if (t === 'youtube') return 'youtube';
   return 'other';
 }
 
@@ -450,6 +451,7 @@ function fileBadgeLabel(file) {
   if (t === 'PPTX') return 'PPT';
   if (t === 'DOCX') return 'DOC';
   if (t === 'XLSX') return 'XLS';
+  if (t === 'YOUTUBE') return '▶ VIDEO';
   return t || 'FILE';
 }
 
@@ -574,6 +576,14 @@ function renderFileRow(file) {
   const bt = fileBadgeType(file);
   const bl = fileBadgeLabel(file);
   const url = fileUrl(file);
+  const isYT = (file.type || '').toLowerCase() === 'youtube';
+  if (isYT) {
+    return `<div class="file-row">
+      <span class="file-badge ${bt}">${bl}</span>
+      <span class="file-name" title="${esc(file.name)}">${esc(file.name)}</span>
+      <a class="file-dl" href="${esc(url)}" target="_blank" rel="noopener" style="background:#c00">▶ Watch</a>
+    </div>`;
+  }
   const pUrl = previewUrl(file);
   const previewBtn = pUrl ? `<a class="file-dl preview" href="${esc(pUrl)}" target="_blank" rel="noopener">Preview</a>` : '';
   const tags = fileUsageTag(file);
